@@ -8,7 +8,7 @@ class Platformer extends Phaser.Scene {
         this.ACCELERATION = 400;
         this.DRAG = 700;    // DRAG < ACCELERATION = icy slide
         this.physics.world.gravity.y = 1500;
-        this.JUMP_VELOCITY = -600;
+        this.JUMP_VELOCITY = -700;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
     }
@@ -17,6 +17,12 @@ class Platformer extends Phaser.Scene {
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 45 tiles wide and 25 tiles tall.
         this.map = this.add.tilemap("level1game", 16, 16, 150, 30);
+
+        
+        this.forcefield1Sound = this.sound.add("forcefield1");
+        this.forcefield2Sound = this.sound.add("forcefield2");
+
+        
 
         // Add a tileset to the map
         // First parameter: name we gave the tileset in Tiled
@@ -55,16 +61,32 @@ class Platformer extends Phaser.Scene {
         this.coinGroup = this.add.group(this.coins);
 
         // set up player avatar
-        my.sprite.player = this.physics.add.sprite(100, 300, "platformer_characters", "tile_0000.png");
-        my.sprite.player.setCollideWorldBounds(true);
+        my.sprite.player = this.physics.add.sprite(100, 100, "platformer_characters", "tile_0000.png");
+        // Set the origin point of the sprite to its center
+        
+        my.sprite.player.width = 18;
+        my.sprite.player.height = 18;
+        my.sprite.player.setDisplaySize(my.sprite.player.width * 2, my.sprite.player.height * 2);
+
+        // Adjust the hitbox size to match the original size of the sprite
+        my.sprite.player.setSize(my.sprite.player.width, my.sprite.player.height);
+        
+        
 
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.groundLayer);
 
+
+
+
+        this.scoreCount = 0
         // TODO: Add coin collision handler
           // Handle collision detection with coins
           this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => {
             obj2.destroy(); // remove coin on overlap
+            this.forcefield2Sound.play();
+            this.scoreCount+=1;
+            
         });
 
         // set up Phaser-provided cursor key input
@@ -80,16 +102,29 @@ class Platformer extends Phaser.Scene {
 
         // TODO: Add movement vfx here
         my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
-            frame: ['smoke_03.png', 'smoke_09.png'],
+            frame: ['window_01.png', 'window_04.png'],
             // TODO: Try: add random: true
-            scale: {start: 0.0001, end: 0.000001},
+            scale: {start: 0.03, end: 0.0008},
             // TODO: Try: maxAliveParticles: 8,
-            lifespan: 350,
+            lifespan: 300,
             // TODO: Try: gravityY: -400,
             alpha: {start: 1, end: 0.1}, 
         });
 
         my.vfx.walking.stop();
+
+
+        my.vfx.jumping = this.add.particles(0, 0, "kenny-particles", {
+            frame: ['spark_01.png', 'spark_04.png'],
+            // TODO: Try: add random: true
+            scale: {start: 0.03, end: 0.0008},
+            // TODO: Try: maxAliveParticles: 8,
+            lifespan: 300,
+            // TODO: Try: gravityY: -400,
+            alpha: {start: 1, end: 0.1}, 
+        });
+
+        my.vfx.jumping.stop();
         
 
         // TODO: add camera code here
@@ -97,11 +132,58 @@ class Platformer extends Phaser.Scene {
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
+
+
+
+        
+
+        this.scoreText = this.add.text(16, 40, 'Souls: ' + this.scoreCount, {
+            fontSize: '32px',
+            fill: '#ffffff'
+        })
+
+
+        this.deathText = this.add.text(16, 80, 'Deaths: ' + this.scoreCount, {
+            fontSize: '32px',
+            fill: '#ffffff'
+        })
+
+        this.deathCount = 0;
+
+        
+
         
 
     }
 
     update() {
+
+        if(my.sprite.player.x > 500){
+            this.scoreText.setPosition(my.sprite.player.x-350, 40);
+            this.deathText.setPosition(my.sprite.player.x-350, 80);
+        }
+
+
+        this.scoreText.setText('Souls: ' + this.scoreCount);
+
+        
+        
+        
+        
+        
+
+        if(my.sprite.player.y > 500){
+            my.sprite.player.setPosition(100, 200)
+            this.forcefield1Sound.play();
+            this.scoreText.setPosition(16, 40);
+
+            this.deathCount+=1;
+            this.deathText.setText('Deaths: ' + this.deathCount);
+
+        }
+
+
+
         if(cursors.left.isDown) {
             my.sprite.player.setAccelerationX(-this.ACCELERATION);
             my.sprite.player.setFlip(true, false);
@@ -116,6 +198,7 @@ class Platformer extends Phaser.Scene {
             if (my.sprite.player.body.blocked.down) {
 
                 my.vfx.walking.start();
+                my.vfx.jumping.stop();
 
             }
 
@@ -134,6 +217,7 @@ class Platformer extends Phaser.Scene {
             if (my.sprite.player.body.blocked.down) {
 
                 my.vfx.walking.start();
+                my.vfx.jumping.stop();
 
             }
 
@@ -151,13 +235,29 @@ class Platformer extends Phaser.Scene {
         // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
         if(!my.sprite.player.body.blocked.down) {
             my.sprite.player.anims.play('jump');
+
+            
+
         }
         if(my.sprite.player.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
             my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+            
+            
+            my.vfx.jumping.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-10, my.sprite.player.displayHeight/2-5, false);
+            my.vfx.jumping.start(); 
+
+            
         }
+
+
 
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.restart();
         }
     }
+
+    newGame(){
+    
+    }
 }
+

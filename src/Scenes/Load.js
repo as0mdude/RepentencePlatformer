@@ -6,8 +6,7 @@ class Load extends Phaser.Scene {
     preload() {
         this.load.setPath("./assets/");
 
-        // Load characters spritesheet
-        this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
+        
 
         this.load.image("tile_0240", "tile_0240.png");
         this.load.image("tile_0241", "tile_0241.png");
@@ -35,9 +34,17 @@ class Load extends Phaser.Scene {
         // The multiatlas was created using TexturePacker and the Kenny
         // Particle Pack asset pack.
         this.load.multiatlas("kenny-particles", "kenny-particles.json");
+
+        this.load.audio("forcefield1", "forceField_003.ogg");
+        this.load.audio("forcefield2", "forceField_004.ogg");
+
     }
 
     create() {
+
+        document.getElementById('description').innerHTML = '<h2>Repentence by Vincent Fu</h2><br>Arrow keys to move // R: restart the level after death'
+
+
         this.anims.create({
             key: 'walk',
             frames: [
