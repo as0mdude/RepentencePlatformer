@@ -44,7 +44,7 @@ class Load extends Phaser.Scene {
 
     create() {
 
-        document.getElementById('description').innerHTML = '<h2>Repentence by Vincent Fu</h2><br>Arrow keys to move // R: restart the level after death'
+        document.getElementById('description').innerHTML = '<h2>Repentence by Vincent Fu</h2><br>Arrow keys to move // R: restart the level after death// Collect 25 souls to finish the stage.'
 
 
         this.anims.create({

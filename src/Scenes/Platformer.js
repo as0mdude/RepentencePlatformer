@@ -183,12 +183,24 @@ class Platformer extends Phaser.Scene {
 
     update() {
 
+        //console.log(my.sprite.player.x);
+
 
         if(this.scoreCount >= 25){
-            this.endText = this.add.text(my.sprite.player.x, 250, 'You Win! \n You saved 25 souls with ' + this.deathCount + ' fall(s)! \n Press (R) to restart game!', {
+
+            if(my.sprite.player.x <= 400){
+                this.endTextX = 300
+            }else if(my.sprite.player.x >= 1900){
+                this.endTextX = 2000
+            }else{
+                this.endTextX = my.sprite.player.x-90
+            }
+            this.endText = this.add.text(this.endTextX, 200, 'You Win! \n You saved 25 souls with ' + this.deathCount + ' fall(s)! \n Press (R) to restart game!', {
                 fontSize: '16px',
                 fill: '#ffffff'
             })
+
+            my.vfx.jumping.stop();
 
             this.deathText.visible = false;
             this.scoreText.visible = false;
