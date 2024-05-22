@@ -22,6 +22,17 @@ class Platformer extends Phaser.Scene {
         this.forcefield1Sound = this.sound.add("forcefield1");
         this.forcefield2Sound = this.sound.add("forcefield2");
 
+        this.voidloop = this.sound.add("voidloop");
+        this.voidloop.loop = true;
+        this.voidloop.play();
+
+
+        
+
+
+
+        
+
         
 
         // Add a tileset to the map
@@ -93,6 +104,7 @@ class Platformer extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
 
         this.rKey = this.input.keyboard.addKey('R');
+        this.mouse1 = this.input.keyboard.addKey('R');
 
         // debug key listener (assigned to D key)
         this.input.keyboard.on('keydown-D', () => {
@@ -150,13 +162,61 @@ class Platformer extends Phaser.Scene {
 
         this.deathCount = 0;
 
-        
 
+        this.warningText = this.add.text(80, 250, 'Click the gamescreen with your mouse to activate sound!', {
+            fontSize: '18px',
+            fill: '#FF0000'
+        })
+
+        
+        /** 
+        this.endText = this.add.text(my.sprite.player.x, my.sprite.player.y, 'You Win!', {
+            fontSize: '32px',
+            fill: '#ffffff'
+        })
+
+        this.endText.visible = false;
+        **/
         
 
     }
 
     update() {
+
+
+        if(this.scoreCount >= 25){
+            this.endText = this.add.text(my.sprite.player.x, 250, 'You Win! \n You saved 25 souls with ' + this.deathCount + ' fall(s)! \n Press (R) to restart game!', {
+                fontSize: '16px',
+                fill: '#ffffff'
+            })
+
+            this.deathText.visible = false;
+            this.scoreText.visible = false;
+
+            my.sprite.player.setVelocity(0);
+            my.sprite.player.setAcceleration(0);
+            my.sprite.player.setVisible(false);
+            my.sprite.player.body.enable = false;
+
+            
+
+
+    
+        }
+
+
+        
+
+        this.input.on('pointerdown', function (pointer)
+        {
+
+            console.log('down');
+
+            this.warningText.visible = false;
+
+        }, this);
+
+
 
         if(my.sprite.player.x > 500){
             this.scoreText.setPosition(my.sprite.player.x-350, 40);
@@ -176,6 +236,7 @@ class Platformer extends Phaser.Scene {
             my.sprite.player.setPosition(100, 200)
             this.forcefield1Sound.play();
             this.scoreText.setPosition(16, 40);
+            this.deathText.setPosition(16, 80);
 
             this.deathCount+=1;
             this.deathText.setText('Deaths: ' + this.deathCount);
@@ -256,8 +317,6 @@ class Platformer extends Phaser.Scene {
         }
     }
 
-    newGame(){
     
-    }
 }
 

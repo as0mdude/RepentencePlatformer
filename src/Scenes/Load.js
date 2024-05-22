@@ -38,6 +38,8 @@ class Load extends Phaser.Scene {
         this.load.audio("forcefield1", "forceField_003.ogg");
         this.load.audio("forcefield2", "forceField_004.ogg");
 
+        this.load.audio("voidloop", "voidloop.ogg");
+
     }
 
     create() {

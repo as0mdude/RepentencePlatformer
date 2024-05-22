@@ -119,18 +119,6 @@
                 {
                  "gid":43,
                  "height":16,
-                 "id":6,
-                 "name":"soul",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":660,
-                 "y":130
-                }, 
-                {
-                 "gid":43,
-                 "height":16,
                  "id":7,
                  "name":"soul",
                  "rotation":0,
