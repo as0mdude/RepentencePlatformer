@@ -1,5 +1,5 @@
-**Platform Improvement**
+**Repentence**
 
-Starter code for creating a platformer game using Arcade Phsyics in Phaser.
+A basic platformer game using Arcade Physics in Phaser made for CMPM120.
 
-Visual assets courtesy of [Kenny Assets](https://kenney.nl/assets), with gratitude.
+Collect 25 souls in order to beat the game.
