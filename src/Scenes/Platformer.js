@@ -195,7 +195,7 @@ class Platformer extends Phaser.Scene {
             }else{
                 this.endTextX = my.sprite.player.x-90
             }
-            this.endText = this.add.text(this.endTextX, 200, 'You Win! \n You saved 25 souls with ' + this.deathCount + ' fall(s)! \n Press (R) to restart game!', {
+            this.endText = this.add.text(this.endTextX, 100, 'You Win! \n You saved 25 souls with ' + this.deathCount + ' fall(s)! \n Press (R) to restart game!', {
                 fontSize: '16px',
                 fill: '#ffffff'
             })
